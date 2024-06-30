@@ -1,0 +1,36 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+  binaryTargets   = ["native", "rhel-openssl-1.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["web3_ai"]
+}
+
+model addresses {
+  chain        String   @db.VarChar(40)
+  address      String   @db.VarChar(110)
+  label_name   String?  @db.VarChar(100)
+  description  String?  @db.VarChar
+  address_name String?  @db.VarChar
+  image_url    String?  @db.VarChar
+  verified     Boolean?
+  symbol       String?  @db.VarChar(50)
+  decimals     BigInt?
+
+  @@id([chain, address])
+  @@index([address], map: "idx_addresses_address")
+  @@schema("web3_ai")
+}
+
+model selectors {
+  selector String  @id @db.Char(66)
+  name     String? @db.VarChar(110)
+  data     Json?   @db.Json
+
+  @@index([name], map: "idx_selectors_name")
+  @@schema("web3_ai")
+}
